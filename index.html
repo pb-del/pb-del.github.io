@@ -1,1 +1,42 @@
-"Hello World"
+<!DOCTYPE html>
+<html>
+<head>
+    <title>UCPM Test</title> 
+    <script src="https://cdn.cookielaw.org/consent/YOUR-DOMAIN-ID/otSDKstub.js"
+    data-domain-script="YOUR-DOMAIN-ID" charset="UTF-8"></script>
+    <script>
+        function OptanonWrapper() {
+            console.log("Consent categories loaded:", OptanonActiveGroups)
+        }
+    </script>
+</head>
+
+<body>
+    <h1>Test UCPM</h1>
+    <button onclick="dropCookie()">Drop Cookie</button>
+    <button onclick="simulateLogin()">Simulate Login</button>
+    <script>
+        function dropCookie() {
+            document.cookie = 'test_cookie=1; path=/;'
+            alert('Cookie set!');
+        }
+
+        function getConsentUUID() {
+            return document.cookie.split('; ')
+                .find(row => row.startsWith('OptanonConsent=')) || 'no-uuid';
+        }
+
+        function simulateLogin() {
+            const uuid = getConsentUUID();
+            fetch('https://YOUR-NETFLY-APP.netlify.app/.netlify/functions.linkConsent', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json'},
+                body: JSON.stringify({ userID: 'user123', consentUUID: uuid})
+            })
+            .then(r => r.json())
+            .then(data => alert(JSON.stringify(data)))
+            .catch(console.error);
+        }
+    </script>
+</body>
+</html>
