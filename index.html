@@ -6,10 +6,10 @@
     <script>
         var OneTrust = {
             dataSubjectParams: {
-                id: "123456789",
+                id: "MAN-123456",
                 identifierType: "MAN",
                 isAnonymous: false,
-                token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkifQ.W3hOVTn7aB-eXDc4GgogcSFrPn1akrIB1SnTCbhl_hQ"
+                token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJNQU4tMTIzNDU2In0.r9ewWMpqEo98UuoWjB5nfhvLiNKRZKzp1SL1FZEYKxw"
             }
         };
     </script>
@@ -34,7 +34,7 @@
 </head>
 
 <body>
-    <h1>UCPM Cross-Device Consent Demo - 7</h1>
+    <h1>UCPM Cross-Device Consent Demo - 8</h1>
     <p> This site demonstrates OneTrust + UCPM integration for both anonymous and authenticated users.</p>
     
     <button onclick="showConsentState()">Show Current Consent State</button>
@@ -49,7 +49,7 @@
     <script>
         const HARDCODED_JWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkifQ.W3hOVTn7aB-eXDc4GgogcSFrPn1akrIB1SnTCbhl_hQ";
         const user_id = "123456789"
-        
+
         function updateResults(title, data) {
             const container = document.getElementById('results');
             container.innerHTML = `<h3>${title}</h3><pre>${JSON.stringify(data,null,2)}</pre>`;
