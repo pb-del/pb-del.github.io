@@ -62,8 +62,9 @@
         // Simulate login: link the anonymous UUID to a fake user
         function simulateLogin() {
             const domainData = OneTrust.GetDomainData();
-            const uuid = domainData?.Consent?.ConsentId || "Not available";
-            console.log("Linking UUID", uuid, "to", user_id)
+            const cookie_id = domainData?.ConsentIntegrationData?.consentPayload?.identifier || "Not available";
+            const id_type = domainData?.ConsentIntegrationData?.consentPayload?.identifierType || "Not available";
+            console.log("Linking Cookie ID", cookie_id, "to Member Access Number", user_id)
 
             var OneTrust = {
                 dataSubjectParams: {
@@ -81,7 +82,7 @@
             setTimeout(() => {
                 const updatedData = OneTrust.GetDomainData();
                 updateResults("Linked Consent State", {
-                    uuid: updatedData?.Consent?.ConsentId,
+                    cookie_id: updatedData?.ConsentIntegrationData?.consentPayload?.identifier,
                     dataSubjectId: user_id,
                     groups: updatedData?.Groups || [],
                     timestamp: updatedData?.Consent?.ConsentTimestamp || null
