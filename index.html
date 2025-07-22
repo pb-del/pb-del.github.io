@@ -37,7 +37,7 @@
 
 
     <script>
-        const HARDCODED_JWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkiLCJuYW1lIjoiSm9obiBEb2UiLCJhZG1pbiI6dHJ1ZX0.19Z3GYWfOdh0cb6c4YRAe7GMpPZ6MnPlJTmWL3T0xeM";
+        const HARDCODED_JWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkiLCJuYW1lIjoiSm9obiBEb2UiLCJhZG1pbiI6dHJ1ZSwiaWF0IjoxNTE2MjM5MDIyfQ.HPH19iWZJ4TQad40oRHlmyx8qlfEUy-AlDBR_NK9HVk";
         const user_id = "123456789"
 
         function updateResults(title, data) {
@@ -68,6 +68,7 @@
             var OneTrust = {
                 dataSubjectParams: {
                     id: "123456789",
+                    identifierType: "MAN",
                     isAnonymous: false,
                     token : HARDCODED_JWT
                 }
