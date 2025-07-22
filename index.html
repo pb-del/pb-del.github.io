@@ -6,10 +6,10 @@
     <script>
         var OneTrust = {
             dataSubjectParams: {
-                id: "MAN-123456",
+                id: "MAN-333333",
                 identifierType: "MAN",
                 isAnonymous: false,
-                token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJNQU4tMTIzNDU2In0.r9ewWMpqEo98UuoWjB5nfhvLiNKRZKzp1SL1FZEYKxw"
+                token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJNQU4tMzMzMzMzIn0.wzBTk6cna_8V72LY4BzRFfrgcGJSaBUktIMPyoF_Vts"
             }
         };
     </script>
@@ -41,6 +41,14 @@
     <button onclick="simulateLogin()">Simulate Login</button>
     <button onclick="dropTestCookie()">Drop Test Cookie</button>
     <button onclick="openPreferenceCenter()">Manage Preferences</button>
+
+    <!-- OneTrust Cookies Settings button start -->
+    <button id="ot-sdk-btn" class="ot-sdk-show-settings">Cookie Settings</button>
+    <!-- OneTrust Cookies Settings button end -->
+
+    <!-- OneTrust Cookies List start -->
+    <div id="ot-sdk-cookie-policy"></div>
+    <!-- OneTrust Cookies List end -->
 
     <h2>Results</h2>
     <div id="results"><em> No data yet.</em></div>
