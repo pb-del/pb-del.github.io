@@ -1,41 +1,86 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>UCPM Test</title> 
-    <script src="https://cdn.cookielaw.org/consent/YOUR-DOMAIN-ID/otSDKstub.js"
-    data-domain-script="YOUR-DOMAIN-ID" charset="UTF-8"></script>
-    <script>
-        function OptanonWrapper() {
-            console.log("Consent categories loaded:", OptanonActiveGroups)
+
+    <!-- OneTrust Cookies Consent Notice start for pb-del.github.io -->
+    <script type="text/javascript" src="https://cdn.cookielaw.org/consent/01982ee7-bcee-74b1-ae28-35a3ab03e43b-test/OtAutoBlock.js" ></script>
+    <script src="https://cdn.cookielaw.org/scripttemplates/otSDKStub.js"  type="text/javascript" charset="UTF-8" data-domain-script="01982ee7-bcee-74b1-ae28-35a3ab03e43b-test" ></script>
+    <script type="text/javascript">
+    function OptanonWrapper() {
+            console.log("OneTrust Loaded. Active consent groups:", OptanonActiveGroups)
         }
     </script>
+    <!-- OneTrust Cookies Consent Notice end for pb-del.github.io -->
 </head>
 
 <body>
-    <h1>Test UCPM</h1>
+    <h1>UCPM Cross-Device Consent Demo</h1>
+    <p> This site demonstrates OneTrust + UCPM integration for both anonymous and authenticated users.</p>
+    
+    <button onclick="showConsentReceipt()">Show Current Consent Receipt</button>
     <button onclick="dropCookie()">Drop Cookie</button>
     <button onclick="simulateLogin()">Simulate Login</button>
+    <button onclick="openPreferenceCenter()">Manage Preferences</button>"
+
     <script>
-        function dropCookie() {
-            document.cookie = 'test_cookie=1; path=/;'
-            alert('Cookie set!');
+        // Show the current consent receipt (anonymous or linked)
+        function showConsentReceipt() {
+            const receipt = OneTrust.GetConsentReceipt();
+            console.log("Current Consent Receipt:", receipt);
+            alert("Current Consent Receipt:\n" + JSON.stringify(receipt, null, 2));
         }
+        // Extract the OneTrust consent UUID from the OptanonConsent cookie
 
         function getConsentUUID() {
-            return document.cookie.split('; ')
-                .find(row => row.startsWith('OptanonConsent=')) || 'no-uuid';
+            const consentCookie = document.cookie
+            .split('; ')
+            .find(row => row.startsWith('OptanonConsent='));
+            if (!consentCookie) return 'no-uuid';
+
+            // The OptanonConsent cookie is URL-encoded; parse out the consentID param
+            const decoded = decodeURLcomponent(consentCookie);
+            const match = decoded.match(/consentID=([^&]+)/);
+            return match ? match[1] : 'no-uuid';
         }
 
+        // Simulate login: link the anonymous UUID to a fake user
         function simulateLogin() {
-            const uuid = getConsentUUID();
-            fetch('https://YOUR-NETFLY-APP.netlify.app/.netlify/functions.linkConsent', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json'},
-                body: JSON.stringify({ userID: 'user123', consentUUID: uuid})
-            })
-            .then(r => r.json())
-            .then(data => alert(JSON.stringify(data)))
-            .catch(console.error);
+            console.log("Fetching anonymous consent receipt...");
+            const beforeReceipt = OneTrust.GetConsentReceipt();
+            console.log("Before linking, receipt:", receipt);
+            alert("Before Linking (Anonymous):\n" + JSON.stringify(beforeReceipt, null, 2));
+
+            
+            // Link this session (anonymous UUID) to a user
+            console.log("Logging in and linking to user123@example.com...")
+            OneTrust.SetUserId('user123@example.com')
+
+            setTimeout(() => {
+                const linkedReceipt = OneTrust.GetConsentReceipt();
+                console.log("After linking, receipt:", linkedReceipt);
+                alert("After linkging (Data Subject):\n" + JSON.stringify(linkedReceipt, null, 2));
+            }, 2000);
+            }
+
+         // example: only set a test cookie if user consented to Performance (C0002)
+        function dropTestCookie() {
+            if (OptanonActiveGroups && OptanonActiveGroups.indexOf('C0002') > -1) {
+                document.cookie ='test_cookie=allowed; path=/;';
+                alert("Test cookie set (Performance consent granted).");
+            } else {
+                alert("Test cookie NOT set - user did not consent to Performance cookies.")
+            }
+        }
+
+        // Open the OneTrust preference center
+        function openPreferenceCenter() {
+            if (typeof OneTrust != 'undefined') {
+                OneTrust.ToggleInfoDisplay();
+            } else {
+                alert("OneTrust not loaded yet.")
+            }
         }
     </script>
 </body>
