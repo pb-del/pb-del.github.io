@@ -52,7 +52,7 @@
 
             updateResults("Current Consent State", {
                 cookie_id,
-                dataSubjectID: domainData?.ConsentIntegrationData?.consentPayload?.identifierType || "Anonymous",
+                identifierType: domainData?.ConsentIntegrationData?.consentPayload?.identifierType || "Anonymous",
                 groups: domainData?.Groups || [],
                 timestamp: domainData?.Consent?.ConsentTimestamp || null
             });
