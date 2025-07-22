@@ -24,7 +24,7 @@
 </head>
 
 <body>
-    <h1>UCPM Cross-Device Consent Demo - 5</h1>
+    <h1>UCPM Cross-Device Consent Demo - 6</h1>
     <p> This site demonstrates OneTrust + UCPM integration for both anonymous and authenticated users.</p>
     
     <button onclick="showConsentState()">Show Current Consent State</button>
@@ -47,11 +47,12 @@
 
         function showConsentState() {
             const domainData = OneTrust.GetDomainData();
-            const uuid = domainData?.Consent?.ConsentId || "Not available";
+            const cookie_id = domainData?.ConsentIntegrationData?.consentPayload?.identifier || "Not available";
+            const id_type = domainData?.ConsentIntegrationData?.consentPayload?.identifierType || "Not available";
 
             updateResults("Current Consent State", {
-                uuid,
-                dataSubjectID: domainData?.Consent?.dataSubjectID || "Anonymous",
+                cookie_id,
+                dataSubjectID: domainData?.ConsentIntegrationData?.consentPayload?.identifierType || "Anonymous",
                 groups: domainData?.Groups || [],
                 timestamp: domainData?.Consent?.ConsentTimestamp || null
             });
