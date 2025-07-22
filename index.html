@@ -24,7 +24,7 @@
 </head>
 
 <body>
-    <h1>UCPM Cross-Device Consent Demo - 2</h1>
+    <h1>UCPM Cross-Device Consent Demo - 3</h1>
     <p> This site demonstrates OneTrust + UCPM integration for both anonymous and authenticated users.</p>
     
     <button onclick="showConsentState()">Show Current Consent State</button>
@@ -112,9 +112,9 @@
 
             console.log("Linking UUID", uuid, "to", user_id)
 
-            OneTrust.SetDataSubjectID(user_id, { token: HARDCODED_JWT });
+            OneTrust.setDataSubjectID(user_id, { token: HARDCODED_JWT });
             OneTrust.UpdateConsent();      // Push link + consent to OneTrust
-            OneTrust.SyncConsentProfile(); // pull updated profile back down
+            OneTrust.syncConsentProfile(); // pull updated profile back down
 
             setTimeout(() => {
                 const updatedData = OneTrust.GetDomainData();
@@ -130,9 +130,11 @@
          // example: only set a test cookie if user consented to Performance (C0002)
         function dropTestCookie() {
             const domainData = OneTrust.GetDomainData();
-            const activeGroups = domainData?.Groups?.filter(g => g.IsActive).map(g =>GroupId) || [];
+            const activeGroups = domainData?.Groups?.filter(
+                g => g.Status === "active" && g.CustomGroupId === "C0002"
+        );
 
-            if (activeGroups.includes('C0002')) {
+            if (activeGroups && activeGroups.length > 0) {
                 document.cookie ='test_cookie=allowed; path=/;';
                 updateResults("Test Cookie", { status: "Set (Performance consent granted)" });
                 console.log("Test cookie set");
