@@ -24,7 +24,7 @@
 </head>
 
 <body>
-    <h1>UCPM Cross-Device Consent Demo - 3</h1>
+    <h1>UCPM Cross-Device Consent Demo - 5</h1>
     <p> This site demonstrates OneTrust + UCPM integration for both anonymous and authenticated users.</p>
     
     <button onclick="showConsentState()">Show Current Consent State</button>
@@ -58,62 +58,23 @@
 
             console.log("Consent State:", domainData);
         }
-        // // Extract the OneTrust consent UUID from the OptanonConsent cookie
-        // function getConsentUUID() {
-        //     const cookie = document.cookie
-        //     .split('; ')
-        //     .find(row => row.startsWith('OptanonConsent='));
-        //     if (!cookie) return null;
-
-        //     // The OptanonConsent cookie is URL-encoded; parse out the consentID param
-        //     const decoded = decodeURLcomponent(cookie);
-        //     const match = decoded.match(/consentID=([^&]+)/);
-        //     return match ? match[1] : null;
-        // }
-
-        // function getOptanonCookie() {
-        //     const raw = document.cookie
-        //     .split('; ')
-        //     .find(row => row.startsWith('OptanonConsent='));
-        //     return raw ?decodeURIComponent(raw) : "Not found";
-        // }
-
-
-        // function showUUID() {
-        //     const uuid = getConsentUUID();
-        //     const cookieVal = getOptanonCookie();
-        //     updateResults("Anonymous UUID & OptanonConsentCookie", { uuid: uuid || "Not found" , cookie: cookieVal});
-        //     console.log("UUID:", uuid, "OptanonConsent cookie:", cookieVal);
-        // }
-
-        // function showActiveGroups() {
-        //     updateResults("Active Cookie Categories", { activeGroups: OptanonActiveGroups || "Not loaded"});
-        //     console.log("Active Groups:", OptanonActiveGroups);
-        // }
-        // async function fetchUUIDPreferences() {
-        //     const uuid = getConsentUUID();
-        //     if(!uuid) {
-        //         updateResults("Error", { message: "No OptanonConsent cookie found" });
-        //     }
-
-        //     const resp = await fetch('/api/fetch-preferences', {
-        //         method: 'POST',
-        //         headers: { 'Content-Type': 'application/json'},
-        //         body: JSON.stringify({ uuid, token: HARDCODED_JWT})
-        //     });
-        //     const data = await resp.json();
-        //     updateResults(`Preferences for UUID: ${uuid}`, data);
-        // }
 
         // Simulate login: link the anonymous UUID to a fake user
         function simulateLogin() {
             const domainData = OneTrust.GetDomainData();
             const uuid = domainData?.Consent?.ConsentId || "Not available";
-
             console.log("Linking UUID", uuid, "to", user_id)
 
-            OneTrust.setDataSubjectID(user_id, { token: HARDCODED_JWT });
-            OneTrust.UpdateConsent();      // Push link + consent to OneTrust
+            var OneTrust = {
+                dataSubjectParams: {
+                    id: "123456789",
+                    isAnonymous: false,
+                    token : HARDCODED_JWT
+                }
+            };
+
+            // OneTrust.setDataSubjectID(user_id, { token: HARDCODED_JWT });
+            // OneTrust.UpdateConsent();      // Push link + consent to OneTrust
             OneTrust.syncConsentProfile(); // pull updated profile back down
 
             setTimeout(() => {
