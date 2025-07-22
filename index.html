@@ -6,21 +6,30 @@
 
 <!-- OneTrust Cookies Consent Notice start for pb-del.github.io -->
 
-<script src="https://cdn.cookielaw.org/consent/01982ee7-bcee-74b1-ae28-35a3ab03e43b-test/otSDKStub.js"  type="text/javascript" charset="UTF-8" data-domain-script="01982ee7-bcee-74b1-ae28-35a3ab03e43b-test" ></script>
-<script type="text/javascript">
-function OptanonWrapper() { }
-</script>
+    <script src="https://cdn.cookielaw.org/consent/01982ee7-bcee-74b1-ae28-35a3ab03e43b/otSDKStub.js"  type="text/javascript" charset="UTF-8" data-domain-script="01982ee7-bcee-74b1-ae28-35a3ab03e43b" ></script>
+    <script type="text/javascript">
+    function OptanonWrapper() {
+        console.log("OneTrust SDK Initialized.");
+        showConsentState(); // Display anonymous UUID and categories
+
+        // Auto-refresh when user changes preferences
+        window.addEventListener('consent.onConsentChanged', () => {
+            console.log("Consent changed, refreshing state.");
+            showConsentState();
+        });
+    }
+    </script>
 <!-- OneTrust Cookies Consent Notice end for pb-del.github.io -->
+
 </head>
 
 <body>
     <h1>UCPM Cross-Device Consent Demo - 1</h1>
     <p> This site demonstrates OneTrust + UCPM integration for both anonymous and authenticated users.</p>
     
-    <button onclick="showUUID()">Show Anonymous UUID</button>
-    <button onclick="fetchUUIDPreferences()">Fetch Preferences for UUID</button>
-    <button onclick="dropTestCookie()">Drop Test Cookie</button>
+    <button onclick="showConsentState()">Show Current Consent State</button>
     <button onclick="simulateLogin()">Simulate Login</button>
+    <button onclick="dropTestCookie()">Drop Test Cookie</button>
     <button onclick="openPreferenceCenter()">Manage Preferences</button>
 
     <h2>Results</h2>
@@ -31,41 +40,56 @@ function OptanonWrapper() { }
         const HARDCODED_JWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkiLCJuYW1lIjoiSm9obiBEb2UiLCJhZG1pbiI6dHJ1ZX0.19Z3GYWfOdh0cb6c4YRAe7GMpPZ6MnPlJTmWL3T0xeM";
         const user_id = "123456789"
 
-        // Extract the OneTrust consent UUID from the OptanonConsent cookie
-        function getConsentUUID() {
-            const cookie = document.cookie
-            .split('; ')
-            .find(row => row.startsWith('OptanonConsent='));
-            if (!consentCookie) return 'no-uuid';
-
-            // The OptanonConsent cookie is URL-encoded; parse out the consentID param
-            const decoded = decodeURLcomponent(cookie);
-            const match = decoded.match(/consentID=([^&]+)/);
-            return match ? match[1] : 'no-uuid';
-        }
-
-        function getOptanonCookie() {
-            const raw = document.cookie
-            .split('; ')
-            .find(row => row.startsWith('OptanonConsent='));
-            return raw ?decodeURIComponent(raw) : "Not found";
-        }
-
         function updateResults(title, data) {
             const container = document.getElementById('results');
             container.innerHTML = `<h3>${title}</h3><pre>${JSON.stringify(data,null,2)}</pre>`;
         }
-        function showUUID() {
-            const uuid = getConsentUUID();
-            const cookieVal = getOptanonCookie();
-            updateResults("Anonymous UUID & OptanonConsentCookie", { uuid: uuid || "Not found" , cookie: cookieVal});
-            console.log("UUID:", uuid, "OptanonConsent cookie:", cookieVal);
-        }
 
-        function showActiveGroups() {
-            updateResults("Active Cookie Categories", { activeGroups: OptanonActiveGroups || "Not loaded"});
-            console.log("Active Groups:", OptanonActiveGroups);
+        function showConsentState() {
+            const domainData = OneTrust.GetDomainData();
+            const uuid = domainData?.Consent?.ConsentId || "Not available";
+
+            updateResults("Current Consent State", {
+                uuid,
+                dataSubjectID: domainData?.Consent?.dataSubjectID || "Anonymous",
+                groups: domainData?.Groups || [],
+                timestamp: domainData?.Consent?.ConsentTimestamp || null
+            });
+
+            console.log("Consent State:", domainData);
         }
+        // // Extract the OneTrust consent UUID from the OptanonConsent cookie
+        // function getConsentUUID() {
+        //     const cookie = document.cookie
+        //     .split('; ')
+        //     .find(row => row.startsWith('OptanonConsent='));
+        //     if (!cookie) return null;
+
+        //     // The OptanonConsent cookie is URL-encoded; parse out the consentID param
+        //     const decoded = decodeURLcomponent(cookie);
+        //     const match = decoded.match(/consentID=([^&]+)/);
+        //     return match ? match[1] : null;
+        // }
+
+        // function getOptanonCookie() {
+        //     const raw = document.cookie
+        //     .split('; ')
+        //     .find(row => row.startsWith('OptanonConsent='));
+        //     return raw ?decodeURIComponent(raw) : "Not found";
+        // }
+
+
+        // function showUUID() {
+        //     const uuid = getConsentUUID();
+        //     const cookieVal = getOptanonCookie();
+        //     updateResults("Anonymous UUID & OptanonConsentCookie", { uuid: uuid || "Not found" , cookie: cookieVal});
+        //     console.log("UUID:", uuid, "OptanonConsent cookie:", cookieVal);
+        // }
+
+        // function showActiveGroups() {
+        //     updateResults("Active Cookie Categories", { activeGroups: OptanonActiveGroups || "Not loaded"});
+        //     console.log("Active Groups:", OptanonActiveGroups);
+        // }
         // async function fetchUUIDPreferences() {
         //     const uuid = getConsentUUID();
         //     if(!uuid) {
@@ -83,31 +107,38 @@ function OptanonWrapper() { }
 
         // Simulate login: link the anonymous UUID to a fake user
         function simulateLogin() {
-            const uuid = getConsentUUID();
-            updateResults("Before Linking", { uuid });
+            const domainData = OneTrust.GetDomainData();
+            const uuid = domainData?.Consent?.ConsentId || "Not available";
 
-            // Link this session (anonymous UUID) to a datasubject using jwt
-            console.log("Logging in and linking to 123456789...")
+            console.log("Linking UUID", uuid, "to", user_id)
 
-            OneTrust.SetUserId(user_id, { token: HARDCODED_JWT });
+            OneTrust.SetDataSubjectID(user_id, { token: HARDCODED_JWT });
+            OneTrust.UpdateConsent();      // Push link + consent to OneTrust
+            OneTrust.SyncConsentProfile(); // pull updated profile back down
 
             setTimeout(() => {
-                updateResults("After Linking" , { uuid, linkedTo: user_id });
-                console.log("Linked UUID", uuid, "to Data Subject", user_id);
-
-                // placeholder: full preferences API added later
-
-                console.log("To fetch full preferences, we will call the OneTrust API via backend later.");
+                const updatedData = OneTrust.GetDomainData();
+                updateResults("Linked Consent State", {
+                    uuid: updatedData?.Consent?.ConsentId,
+                    dataSubjectId: user_id,
+                    groups: updatedData?.Groups || [],
+                    timestamp: updatedData?.Consent?.ConsentTimestamp || null
+            });
             }, 2000);
         }
 
          // example: only set a test cookie if user consented to Performance (C0002)
         function dropTestCookie() {
-            if (OptanonActiveGroups && OptanonActiveGroups.indexOf('C0002') > -1) {
+            const domainData = OneTrust.GetDomainData();
+            const activeGroups = domainData?.Groups?.filter(g => g.IsActive).map(g =>GroupId) || [];
+
+            if (activeGroups.includes('C0002')) {
                 document.cookie ='test_cookie=allowed; path=/;';
                 updateResults("Test Cookie", { status: "Set (Performance consent granted)" });
+                console.log("Test cookie set");
             } else {
                 updateResults("Test Cookie", { status: "Blocked (no Performance consent granted)" });
+                console.log("Test cookie blocked");
             }
         }
 
