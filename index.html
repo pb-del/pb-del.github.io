@@ -4,14 +4,12 @@
     <meta charset="UTF-8">
     <title>UCPM Test</title> 
     <script>
-        const HARDCODED_JWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkiLCJuYW1lIjoiSm9obiBEb2UiLCJhZG1pbiI6dHJ1ZSwiaWF0IjoxNTE2MjM5MDIyfQ.HPH19iWZJ4TQad40oRHlmyx8qlfEUy-AlDBR_NK9HVk";
-        const user_id = "123456789"
         var OneTrust = {
             dataSubjectParams: {
                 id: "123456789",
                 identifierType: "MAN",
                 isAnonymous: false,
-                token : HARDCODED_JWT
+                token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkifQ.W3hOVTn7aB-eXDc4GgogcSFrPn1akrIB1SnTCbhl_hQ"
             }
         };
     </script>
@@ -49,7 +47,9 @@
 
 
     <script>
-
+        const HARDCODED_JWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkifQ.W3hOVTn7aB-eXDc4GgogcSFrPn1akrIB1SnTCbhl_hQ";
+        const user_id = "123456789"
+        
         function updateResults(title, data) {
             const container = document.getElementById('results');
             container.innerHTML = `<h3>${title}</h3><pre>${JSON.stringify(data,null,2)}</pre>`;
