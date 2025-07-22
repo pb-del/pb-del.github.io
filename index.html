@@ -6,10 +6,10 @@
     <script>
         var OneTrust = {
             dataSubjectParams: {
-                id: "MAN-333333",
+                id: "MAN-345678",
                 identifierType: "MAN",
                 isAnonymous: false,
-                token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJNQU4tMzMzMzMzIn0.wzBTk6cna_8V72LY4BzRFfrgcGJSaBUktIMPyoF_Vts"
+                token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJNQU4tMzQ1Njc4In0.N2kP_BTB1p2DoReFkKrCEq3fxx5rJF_RZq9qmKyExw0"
             }
         };
     </script>
@@ -30,6 +30,8 @@
     }
     </script>
 <!-- OneTrust Cookies Consent Notice end for pb-del.github.io -->
+
+
 
 </head>
 
@@ -128,5 +130,12 @@
             }
         }
     </script>
+
+    <script>
+        document.cookie = "perf_test_cookie=1; path=/; max-age86400";
+        console.log("dummy Performance Cookie created")
+    </script>
+
+
 </body>
 </html>
