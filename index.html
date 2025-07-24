@@ -2,18 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>UCPM Test</title> 
-    <script>
-        var OneTrust = {
-            dataSubjectParams: {
-                id: "MAN-345678",
-                identifierType: "MAN",
-                isAnonymous: false,
-                token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJNQU4tMzQ1Njc4In0.N2kP_BTB1p2DoReFkKrCEq3fxx5rJF_RZq9qmKyExw0"
-            }
-        };
-    </script>
-
+    <title>UCPM Test (Anonymous)</title> 
 
 <!-- OneTrust Cookies Consent Notice start for pb-del.github.io -->
     <script src="https://cdn.cookielaw.org/consent/01982ee7-bcee-74b1-ae28-35a3ab03e43b/otSDKStub.js"  type="text/javascript" charset="UTF-8" data-domain-script="01982ee7-bcee-74b1-ae28-35a3ab03e43b" ></script>
@@ -31,16 +20,17 @@
     </script>
 <!-- OneTrust Cookies Consent Notice end for pb-del.github.io -->
 
-
-
 </head>
 
 <body>
-    <h1>UCPM Cross-Device Consent Demo - 8</h1>
-    <p> This site demonstrates OneTrust + UCPM integration for both anonymous and authenticated users.</p>
+    <h1>Welcome to the public site!</h1>
+    <p> You are browsing anonymously. Preferences are saved against a cookie ID.</p>
+
+    <a href="dashboard/">Log in</a>
     
     <button onclick="showConsentState()">Show Current Consent State</button>
-    <button onclick="simulateLogin()">Simulate Login</button>
+    <pre id="output"></pre>
+
     <button onclick="dropTestCookie()">Drop Test Cookie</button>
     <button onclick="openPreferenceCenter()">Manage Preferences</button>
 
@@ -55,55 +45,14 @@
     <h2>Results</h2>
     <div id="results"><em> No data yet.</em></div>
 
-
     <script>
-        const HARDCODED_JWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkifQ.W3hOVTn7aB-eXDc4GgogcSFrPn1akrIB1SnTCbhl_hQ";
-        const user_id = "123456789"
-
-        function updateResults(title, data) {
-            const container = document.getElementById('results');
-            container.innerHTML = `<h3>${title}</h3><pre>${JSON.stringify(data,null,2)}</pre>`;
-        }
 
         function showConsentState() {
             const domainData = OneTrust.GetDomainData();
             const cookie_id = domainData?.ConsentIntegrationData?.consentPayload?.identifier || "Not available";
             const id_type = domainData?.ConsentIntegrationData?.consentPayload?.identifierType || "Not available";
-
-            updateResults("Current Consent State", {
-                cookie_id,
-                identifierType: domainData?.ConsentIntegrationData?.consentPayload?.identifierType || "Anonymous",
-                groups: domainData?.Groups || [],
-                timestamp: domainData?.Consent?.ConsentTimestamp || null
-            });
-
             console.log("Consent State:", domainData);
         }
-
-        // Simulate login: link the anonymous UUID to a fake user
-        function simulateLogin() {
-            const domainData = OneTrust.GetDomainData();
-            const cookie_id = domainData?.ConsentIntegrationData?.consentPayload?.identifier || "Not available";
-            const id_type = domainData?.ConsentIntegrationData?.consentPayload?.identifierType || "Not available";
-            console.log("Linking Cookie ID", cookie_id, "to Member Access Number", user_id)
-
-
-
-            // OneTrust.setDataSubjectID(user_id, { token: HARDCODED_JWT });
-            // OneTrust.UpdateConsent();      // Push link + consent to OneTrust
-            OneTrust.syncConsentProfile(); // pull updated profile back down
-
-            setTimeout(() => {
-                const updatedData = OneTrust.GetDomainData();
-                updateResults("Linked Consent State", {
-                    cookie_id: updatedData?.ConsentIntegrationData?.consentPayload?.identifier,
-                    dataSubjectId: user_id,
-                    groups: updatedData?.Groups || [],
-                    timestamp: updatedData?.Consent?.ConsentTimestamp || null
-            });
-            }, 2000);
-        }
-
          // example: only set a test cookie if user consented to Performance (C0002)
         function dropTestCookie() {
             const domainData = OneTrust.GetDomainData();
@@ -120,7 +69,6 @@
                 console.log("Test cookie blocked");
             }
         }
-
         // Open the OneTrust preference center
         function openPreferenceCenter() {
             if (typeof OneTrust != 'undefined') {
@@ -135,7 +83,6 @@
         document.cookie = "perf_test_cookie=1; path=/; max-age86400";
         console.log("dummy Performance Cookie created")
     </script>
-
 
 </body>
 </html>
