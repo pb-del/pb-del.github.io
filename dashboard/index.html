@@ -1,1 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>UCPM Test (Authenticated)</title> 
+    <script> 
+        var OneTrust = {
+            dataSubjectParams: {
+                id: "MAN-345678", // this would have to be pulled from the Identity provider
+                identifierType: "MAN",
+                isAnonymous: false,
+                token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJNQU4tMzQ1Njc4In0.N2kP_BTB1p2DoReFkKrCEq3fxx5rJF_RZq9qmKyExw0" // this would have to be generated server side using a cloud function
+            }
+        };
+    </script>
+
+<!-- OneTrust Cookies Consent Notice start for pb-del.github.io -->
+    <script src="https://cdn.cookielaw.org/consent/01982ee7-bcee-74b1-ae28-35a3ab03e43b/otSDKStub.js"  type="text/javascript" charset="UTF-8" data-domain-script="01982ee7-bcee-74b1-ae28-35a3ab03e43b" ></script>
+    <script type="text/javascript">
+    function OptanonWrapper() { 
+        console.log("OneTrust SDK Initialized.");
+        showConsentState(); // Display anonymous UUID and categories
+
+        // Auto-refresh when user changes preferences
+        window.addEventListener('consent.onConsentChanged', () => {
+            console.log("Consent changed, refreshing state.");
+            showConsentState();
+        });
+    }
+    </script>
+<!-- OneTrust Cookies Consent Notice end for pb-del.github.io -->
+
+</head>
+
+<body>
+
+    <h1> Welcome Back</h1>
+    <p>Your Cookie ID is now linked to your Data Subject Profile.</p>
+
+    <button onclick="showConsentState()">Show Current Consent State</button>
+    <pre id="output"></pre>
+
+    <button onclick="showConsentState()">Show Current Consent State</button>
+    <pre id="output"></pre>
+
+    <button onclick="dropTestCookie()">Drop Test Cookie</button>
+    <button onclick="openPreferenceCenter()">Manage Preferences</button>
+
+    <!-- OneTrust Cookies Settings button start -->
+    <button id="ot-sdk-btn" class="ot-sdk-show-settings">Cookie Settings</button>
+    <!-- OneTrust Cookies Settings button end -->
+
+    <!-- OneTrust Cookies List start -->
+    <div id="ot-sdk-cookie-policy"></div>
+    <!-- OneTrust Cookies List end -->
+
+    <h2>Results</h2>
+    <div id="results"><em> No data yet.</em></div>
+
+    <script>
+
+        function showConsentState() {
+            const domainData = OneTrust.GetDomainData();
+            const cookie_id = domainData?.ConsentIntegrationData?.consentPayload?.identifier || "Not available";
+            const id_type = domainData?.ConsentIntegrationData?.consentPayload?.identifierType || "Not available";
+            console.log("Consent State:", domainData);
+        }
+         // example: only set a test cookie if user consented to Performance (C0002)
+        function dropTestCookie() {
+            const domainData = OneTrust.GetDomainData();
+            const activeGroups = domainData?.Groups?.filter(
+                g => g.Status === "active" && g.CustomGroupId === "C0002"
+        );
+
+            if (activeGroups && activeGroups.length > 0) {
+                document.cookie ='test_cookie=allowed; path=/;';
+                updateResults("Test Cookie", { status: "Set (Performance consent granted)" });
+                console.log("Test cookie set");
+            } else {
+                updateResults("Test Cookie", { status: "Blocked (no Performance consent granted)" });
+                console.log("Test cookie blocked");
+            }
+        }
+        // Open the OneTrust preference center
+        function openPreferenceCenter() {
+            if (typeof OneTrust != 'undefined') {
+                OneTrust.ToggleInfoDisplay();
+            } else {
+                alert("OneTrust not loaded yet.")
+            }
+        }
+    </script>
+
+    <script>
+        document.cookie = "perf_test_cookie=1; path=/; max-age86400";
+        console.log("dummy Performance Cookie created")
+    </script>
+
+</body>
+</html>
+
 
