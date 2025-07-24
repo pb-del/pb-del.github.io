@@ -40,19 +40,7 @@
     <button onclick="showConsentState()">Show Current Consent State</button>
     <pre id="output"></pre>
 
-    <button onclick="showConsentState()">Show Current Consent State</button>
-    <pre id="output"></pre>
-
     <button onclick="dropTestCookie()">Drop Test Cookie</button>
-    <button onclick="openPreferenceCenter()">Manage Preferences</button>
-
-    <!-- OneTrust Cookies Settings button start -->
-    <button id="ot-sdk-btn" class="ot-sdk-show-settings">Cookie Settings</button>
-    <!-- OneTrust Cookies Settings button end -->
-
-    <!-- OneTrust Cookies List start -->
-    <div id="ot-sdk-cookie-policy"></div>
-    <!-- OneTrust Cookies List end -->
 
     <h2>Results</h2>
     <div id="results"><em> No data yet.</em></div>
@@ -71,7 +59,6 @@
             const activeGroups = domainData?.Groups?.filter(
                 g => g.Status === "active" && g.CustomGroupId === "C0002"
         );
-
             if (activeGroups && activeGroups.length > 0) {
                 document.cookie ='test_cookie=allowed; path=/;';
                 updateResults("Test Cookie", { status: "Set (Performance consent granted)" });
@@ -81,15 +68,21 @@
                 console.log("Test cookie blocked");
             }
         }
-        // Open the OneTrust preference center
-        function openPreferenceCenter() {
-            if (typeof OneTrust != 'undefined') {
-                OneTrust.ToggleInfoDisplay();
-            } else {
-                alert("OneTrust not loaded yet.")
-            }
+
+        function updateResults(title, data) {
+            const output = document.getElementById("output")
+            output.textContent = `${title}:\n` + JSON.stringify(data, null, 2);
         }
     </script>
+
+
+    <!-- OneTrust Cookies Settings button start -->
+    <button id="ot-sdk-btn" class="ot-sdk-show-settings">Cookie Settings</button>
+    <!-- OneTrust Cookies Settings button end -->
+
+    <!-- OneTrust Cookies List start -->
+    <div id="ot-sdk-cookie-policy"></div>
+    <!-- OneTrust Cookies List end -->
 
     <script>
         document.cookie = "perf_test_cookie=1; path=/; max-age86400";
