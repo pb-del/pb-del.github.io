@@ -9,13 +9,17 @@
     <script type="text/javascript">
     function OptanonWrapper() { 
         console.log("OneTrust SDK Initialized.");
-        showConsentState(); // Display anonymous UUID and categories
+        // Drop dynamic test cookie for OT scanning & testing
 
-        // Auto-refresh when user changes preferences
-        window.addEventListener('consent.onConsentChanged', () => {
-            console.log("Consent changed, refreshing state.");
-            showConsentState();
+        const activeGroups =  OnetrustActiveGroups ? OnetrustActiveGroups.split(",") : [];
+        
+        activeGroups.forEach(groupID => {
+            const cookieName = `ot_testcookie_${groupID.toLowerCase()}`;
+            document.cookie `${cookieName}=1; path=/; SameSite=Lax`;
+            console.log(`Set test cookie for ${groupID}: ${cookieName}`);
         });
+        
+        console.log("Active consented groups:", activeGroups.join(","));
     }
     </script>
 <!-- OneTrust Cookies Consent Notice end for pb-del.github.io -->
@@ -27,44 +31,6 @@
     <p> You are browsing anonymously. Preferences are saved against a cookie ID.</p>
 
     <a href="dashboard/">Log in</a>
-    
-    <button onclick="showConsentState()">Show Current Consent State</button>
-    <pre id="output"></pre>
-
-    <button onclick="dropTestCookie()">Drop Test Cookie</button>
-
-    <h2>Results</h2>
-    <div id="results"><em> No data yet.</em></div>
-
-    <script>
-
-        function showConsentState() {
-            const domainData = OneTrust.GetDomainData();
-            const cookie_id = domainData?.ConsentIntegrationData?.consentPayload?.identifier || "Not available";
-            const id_type = domainData?.ConsentIntegrationData?.consentPayload?.identifierType || "Not available";
-            console.log("Consent State:", domainData);
-        }
-         // example: only set a test cookie if user consented to Performance (C0002)
-         function dropTestCookie() {
-            const domainData = OneTrust.GetDomainData();
-            const activeGroups = domainData?.Groups?.filter(
-                g => g.Status === "active" && g.CustomGroupId === "C0002"
-        );
-            if (activeGroups && activeGroups.length > 0) {
-                document.cookie ='test_cookie=allowed; path=/;';
-                updateResults("Test Cookie", { status: "Set (Performance consent granted)" });
-                console.log("Test cookie set");
-            } else {
-                updateResults("Test Cookie", { status: "Blocked (no Performance consent granted)" });
-                console.log("Test cookie blocked");
-            }
-        }
-
-        function updateResults(title, data) {
-            const output = document.getElementById("output")
-            output.textContent = `${title}:\n` + JSON.stringify(data, null, 2);
-        }
-    </script>
 
     <!-- OneTrust Cookies Settings button start -->
     <button id="ot-sdk-btn" class="ot-sdk-show-settings">Cookie Settings</button>
@@ -73,11 +39,6 @@
     <!-- OneTrust Cookies List start -->
     <div id="ot-sdk-cookie-policy"></div>
     <!-- OneTrust Cookies List end -->
-
-    <script>
-        document.cookie = "perf_test_cookie=1; path=/; max-age86400";
-        console.log("dummy Performance Cookie created")
-    </script>
 
 </body>
 </html>
