@@ -9,29 +9,18 @@
     <script type="text/javascript">
 
     function toConsole() {
-    console.log("SUCCESS");
+        console.log("SUCCESS");
     }
 
     function OptanonWrapper() {
-    if (OnetrustActiveGroups.includes("C0002")) {
+        if (OnetrustActiveGroups.includes("C0002")) {
         toConsole();
-    }
+        }
+
+        OneTrust.InsertScript('/scripts/perf_cookie.js', 'head', null, null, 'C0002')
     }
 
-    // function OptanonWrapper() { 
-    //     console.log("OneTrust SDK Initialized.");
-    //     // Drop dynamic test cookie for OT scanning & testing
-
-    //     const activeGroups =  OnetrustActiveGroups ? OnetrustActiveGroups.split(",") : [];
-        
-    //     activeGroups.forEach(groupID => {
-    //         const cookieName = `ot_testcookie_${groupID.toLowerCase()}`;
-    //         document.cookie = `${cookieName}=1; path=/; SameSite=Lax`;
-    //         console.log(`Set test cookie for ${groupID}: ${cookieName}`);
-    //     });
-        
-    //     OneTrust.testLog();
-    // }
+    
     </script>
 <!-- OneTrust Cookies Consent Notice end for pb-del.github.io -->
 
@@ -51,8 +40,14 @@
     <div id="ot-sdk-cookie-policy"></div>
     <!-- OneTrust Cookies List end -->
 
-    <script type="text/plain" class="optanon-category-C0002">
+    <!-- <script type="text/plain" class="optanon-category-C0002">
         document.cookie = "Perf_TestCookie" + "=" + "Test_CookieHere!";
+    </script> -->
+
+    <script> 
+        window.addEventListener("OneTrustGroupsUpdated",event =>{
+        console.log(`The following groups are now active: ${event.detail.join(", ")}`)
+        });
     </script>
 
 </body>
