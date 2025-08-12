@@ -7,20 +7,31 @@
 <!-- OneTrust Cookies Consent Notice start for pb-del.github.io -->
     <script src="https://cdn.cookielaw.org/consent/01982ee7-bcee-74b1-ae28-35a3ab03e43b/otSDKStub.js"  type="text/javascript" charset="UTF-8" data-domain-script="01982ee7-bcee-74b1-ae28-35a3ab03e43b" ></script>
     <script type="text/javascript">
-    function OptanonWrapper() { 
-        console.log("OneTrust SDK Initialized.");
-        // Drop dynamic test cookie for OT scanning & testing
 
-        const activeGroups =  OnetrustActiveGroups ? OnetrustActiveGroups.split(",") : [];
-        
-        activeGroups.forEach(groupID => {
-            const cookieName = `ot_testcookie_${groupID.toLowerCase()}`;
-            document.cookie `${cookieName}=1; path=/; SameSite=Lax`;
-            console.log(`Set test cookie for ${groupID}: ${cookieName}`);
-        });
-        
-        console.log("Active consented groups:", activeGroups.join(","));
+    function toConsole() {
+    console.log("SUCCESS");
     }
+
+    function OptanonWrapper() {
+    if (OnetrustActiveGroups.includes("C0002")) {
+        toConsole();
+    }
+    }
+
+    // function OptanonWrapper() { 
+    //     console.log("OneTrust SDK Initialized.");
+    //     // Drop dynamic test cookie for OT scanning & testing
+
+    //     const activeGroups =  OnetrustActiveGroups ? OnetrustActiveGroups.split(",") : [];
+        
+    //     activeGroups.forEach(groupID => {
+    //         const cookieName = `ot_testcookie_${groupID.toLowerCase()}`;
+    //         document.cookie = `${cookieName}=1; path=/; SameSite=Lax`;
+    //         console.log(`Set test cookie for ${groupID}: ${cookieName}`);
+    //     });
+        
+    //     OneTrust.testLog();
+    // }
     </script>
 <!-- OneTrust Cookies Consent Notice end for pb-del.github.io -->
 
@@ -39,6 +50,10 @@
     <!-- OneTrust Cookies List start -->
     <div id="ot-sdk-cookie-policy"></div>
     <!-- OneTrust Cookies List end -->
+
+    <script type="text/plain" class="optanon-category-C0002">
+        document.cookie = "Perf_TestCookie" + "=" + "Test_CookieHere!";
+    </script>
 
 </body>
 </html>
