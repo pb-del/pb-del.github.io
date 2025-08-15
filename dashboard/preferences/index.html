@@ -1,1 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>UCPM Preference Center</title> 
+    <script> 
+        var OneTrust = {
+            dataSubjectParams: {
+                id: "MAN-345678", // this would have to be pulled from the Identity provider
+                identifierType: "MAN",
+                isAnonymous: false,
+                token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJNQU4tMzQ1Njc4In0.N2kP_BTB1p2DoReFkKrCEq3fxx5rJF_RZq9qmKyExw0" // this would have to be generated server side using a cloud function
+            }
+        };
+    </script>
 
+<!-- OneTrust Cookies Consent Notice start for pb-del.github.io -->
+    <script src="https://cdn.cookielaw.org/consent/01982ee7-bcee-74b1-ae28-35a3ab03e43b/otSDKStub.js"  type="text/javascript" charset="UTF-8" data-domain-script="01982ee7-bcee-74b1-ae28-35a3ab03e43b" ></script>
+    <script type="text/javascript">
+    function OptanonWrapper() { 
+
+        console.log("OneTrust SDK Initialized.");
+        showConsentState(); // Display anonymous UUID and categories
+    }
+    </script>
+<!-- OneTrust Cookies Consent Notice end for pb-del.github.io -->
+
+</head>
+
+<body>
+
+    <h1> Demo Preference Center</h1>
+    <p>This preference center displays the authenticated cookie and cpm preferences associated with your account</p>
+
+    <button onclick="showConsentState()">Show Current Consent State in the console</button>
+    <pre id="output"></pre>
+
+    <h2> Custom Preference Center</h2>
+    <button id="get">GET Preferences</button>
+
+    <h3> Raw response </h3>
+    <pre id ="raw" style = "white-space:pre-wrap;"></pre>
+
+    <h3> Summary (by purpose) </h3>
+    <pre id ="summary" style="white-space:pre-wrap;"></pre>
+
+    <script>
+
+        function showConsentState() {
+            const domainData = OneTrust.GetDomainData();
+            const cookie_id = domainData?.ConsentIntegrationData?.consentPayload?.identifier || "Not available";
+            const id_type = domainData?.ConsentIntegrationData?.consentPayload?.identifierType || "Not available";
+            console.log("Consent State:", domainData);
+        }
+
+        const PURPOSE_NAME_BY_ID = {
+            "d7288f85-76c0-4374-a565-d241e7693e6e": "Strictly Necessary Cookies",
+            "3709f25d-d42d-4947-b61d-c4fac9bc4f4b": "Performance Cookies"
+        }
+
+        const OT_demo_jwt ='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJNQU4tMzQ1Njc4In0.N2kP_BTB1p2DoReFkKrCEq3fxx5rJF_RZq9qmKyExw0'
+        async function getPreferences() {
+            const out = document.getElementById('raw');
+            const sum = document.getElementById('summary');
+
+            out.textContent = 'Loading...';
+            sum.textContent = '';
+
+            try {
+                const res = await fetch('https://consent-api.onetrust.com/v1/preferences', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'identifier': 'MAN-345678',
+                        'tenantId': '920f4633-570d-4168-84fb-38be47679c8f',
+                        'Authorization':  'Bearer ${OT_demo_jwt}'
+                    }
+                }); 
+
+                const data = await res.json();
+                out.textContent = JSON.stringify(data, null, 2);
+
+                // Simple summary 
+
+                const prefs = Array.isArray(data.preferences) ? data.preferences : [];
+                const lines = prefs.map(p => {
+                    const name = PURPOSE_NAME_BY_ID[p.id] || p.id;
+                    const status = p.status || 'UNKNOWN';
+                    const exp = p.expiryDate ? ` (expires ${p.expiryDate})` : '';
+                    return `* ${name} -- ${status}${exp}`;
+                });
+
+                const meta = data.dataElements
+                ? `Device: ${data.dataElements.Device || '-'}, Browser: ${data.dataElements.Browser || '-'}`
+                : '';
+
+                sum.textContent = [meta, ...lines].filter(Boolean).join('\n');
+            } catch (err) {
+                out.textContent = `Error: ${err?.message || String(err)}`;
+            }
+        }
+
+        document.getElementById('get').addEventListener('click', getPreferences);
+        document.addEventListener('DOMContentLoaded', getPreferences);
+
+        
+        // Save Preferences - SDK only
+
+        // function savePreferences() {
+        //     const checkboxes = document.querySelectorAll("#prefForm input[type='checkbox']");
+        //     checkboxes.forEach(cb => {
+        //         const catId = cb.dataset.templateid;
+        //         const bitValue = cb.checked ? 1 : 0;
+        //         OneTrust.UpdateConsent(catId, bitValue);
+        //     });
+        // }
+
+    </script>
+
+
+</body>
+</html>
