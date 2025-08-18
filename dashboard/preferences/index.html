@@ -40,8 +40,9 @@
     <h3> Raw response </h3>
     <pre id ="raw" style = "white-space:pre-wrap;"></pre>
 
-    <h3> Summary (by purpose) </h3>
-    <pre id ="summary" style="white-space:pre-wrap;"></pre>
+    <h3> Preference Center </h3>
+    <div id ="pc"></div>
+    <button id ="saveBtn">Save</button>
 
     <script>
 
@@ -52,18 +53,19 @@
             console.log("Consent State:", domainData);
         }
 
-        // fetch purpose IDs from internal mapping or via api call and map to categories desired to be displayed on the browser
-        const PURPOSE_NAME_BY_ID = {
-            "d7288f85-76c0-4374-a565-d241e7693e6e": "Strictly Necessary Cookies",
-            "3709f25d-d42d-4947-b61d-c4fac9bc4f4b": "Performance Cookies"
-        }
-
         async function getPreferences() {
             const out = document.getElementById('raw');
-            const sum = document.getElementById('summary');
-
+            const container = document.getElementById('pc');
+            
             out.textContent = 'Loading...';
             sum.textContent = '';
+
+            // fetch purpose IDs from internal mapping or via api call and map to categories desired to be displayed on the browser
+             const purpose_name_by_id = {
+                "d7288f85-76c0-4374-a565-d241e7693e6e": "Strictly Necessary Cookies",
+                "3709f25d-d42d-4947-b61d-c4fac9bc4f4b": "Performance Cookies"
+                // add more mappings as necessary
+            };
 
             try {
                 const res = await fetch('https://consent-api.onetrust.com/v2/preferences', {
@@ -79,40 +81,39 @@
                 const data = await res.json();
                 out.textContent = JSON.stringify(data, null, 2);
 
-                // Simple summary 
+                container.innerHTML = "";
 
-                const prefs = Array.isArray(data.purposes) ? data.purposes : [];
-                const lines = prefs.map(p => {
-                    const name = PURPOSE_NAME_BY_ID[p.id] || p.id;
-                    const status = p.status || 'UNKNOWN';
-                    return `* ${name} -- ${status}`;
+                (data?.purposes || []).forEach(({ id, status }) => {
+                    const s = String(status || "").toUpperCase(); // WITHDRAWN | ACTIVE | ALWAYS_ACTIVE
+                    const checked = s === "ACTIVE" || s === "ALWAYS_ACTIVE";
+                    const locked  = s === "ALWAYS_ACTIVE";
+
+                    // use purpose id to map to purpose name
+                    const purposeName = purpose_name_by_id[id] || id; 
+
+                    const input = document.createElement("input");
+                    input.type = "checkbox";
+                    input.checked = checked;
+                    input.disabled = locked;
+                    input.dataset.purposeID = id; // keep original id for later use
+
+                    const label = document.createElement("span");
+                    label.textContent = purposeName;
+
+                    const row = document.createElement("div");
+                    row.append(label, input);
+                    container.appendChild(row);
                 });
 
-                const meta = data.dataElements
-                ? `Device: ${data.dataElements.Device || '-'}, Browser: ${data.dataElements.Browser || '-'}`
-                : '';
-
-                sum.textContent = [meta, ...lines].filter(Boolean).join('\n');
             } catch (err) {
                 out.textContent = `Error: ${err?.message || String(err)}`;
+                return {};
             }
         }
 
         document.getElementById('get').addEventListener('click', getPreferences);
         document.addEventListener('DOMContentLoaded', getPreferences);
-
         
-        // Save Preferences - SDK only
-
-        // function savePreferences() {
-        //     const checkboxes = document.querySelectorAll("#prefForm input[type='checkbox']");
-        //     checkboxes.forEach(cb => {
-        //         const catId = cb.dataset.templateid;
-        //         const bitValue = cb.checked ? 1 : 0;
-        //         OneTrust.UpdateConsent(catId, bitValue);
-        //     });
-        // }
-
     </script>
 
 
