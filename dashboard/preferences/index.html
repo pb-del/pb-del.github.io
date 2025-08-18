@@ -80,35 +80,35 @@
                 const data = await res.json();
 
                 // raw output
-                if (out) out.textContent = JSON.stringify(data, null, 2);
+                out.textContent = JSON.stringify(data, null, 2);
 
 
                 // preference center
-                if (container) {
-                    container.innerHTML = "";
-                    (data?.purposes || []).forEach(({ id, status }) => {
+                container.innerHTML = "";
+                    (data.purposes || []).forEach(({ id, status }) => {
+                        // use purpose id to map to purpose name
+                        const purposeName = purpose_name_by_id[id] || id; 
                         const s = String(status || "").toUpperCase(); // WITHDRAWN | ACTIVE | ALWAYS_ACTIVE
                         const checked = s === "ACTIVE" || s === "ALWAYS_ACTIVE";
                         const locked  = s === "ALWAYS_ACTIVE";
 
-                        // use purpose id to map to purpose name
-                        const purposeName = purpose_name_by_id[id] || id; 
-
+                        // build row
                         const row = document.createElement("div");
+
                         const label = document.createElement("span");
-                        const input = document.createElement("input");
-                        
                         label.textContent = purposeName;
+
+                        const input = document.createElement("input");
 
                         input.type = "checkbox";
                         input.checked = checked;
                         input.disabled = locked;
-                        input.dataset.purposeID = id; // keep original id for later use
+                        input.dataset.purposeId = id; // keep original id for later use
                         
-                        row.append(label, input);
+                        row.appendChild(label);
+                        row.appendChild(input);
                         container.appendChild(row);
                     });
-                }
 
             } catch (err) {
                 out.textContent = `Error: ${err?.message || String(err)}`;
