@@ -42,7 +42,7 @@
 
     <h3> Preference Center </h3>
     <div id ="pc"></div>
-    <button id ="saveBtn">Save</button>
+    <!-- <button id ="saveBtn">Save</button> -->
 
     <script>
 
@@ -58,7 +58,6 @@
             const container = document.getElementById('pc');
             
             out.textContent = 'Loading...';
-            sum.textContent = '';
 
             // fetch purpose IDs from internal mapping or via api call and map to categories desired to be displayed on the browser
              const purpose_name_by_id = {
@@ -113,7 +112,7 @@
 
         document.getElementById('get').addEventListener('click', getPreferences);
         document.addEventListener('DOMContentLoaded', getPreferences);
-        
+
     </script>
 
 
