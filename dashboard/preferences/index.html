@@ -14,16 +14,16 @@
         };
     </script>
 
-<!-- OneTrust Cookies Consent Notice start for pb-del.github.io -->
-    <script src="https://cdn.cookielaw.org/consent/01982ee7-bcee-74b1-ae28-35a3ab03e43b/otSDKStub.js"  type="text/javascript" charset="UTF-8" data-domain-script="01982ee7-bcee-74b1-ae28-35a3ab03e43b" ></script>
+<!-- OneTrust Cookies Consent Notice start for pb-del.github.io/dashboard -->
+    <script src="https://cdn.cookielaw.org/consent/01983d79-97c6-7c6d-b18b-96739e2ea7ce/otSDKStub.js"  type="text/javascript" charset="UTF-8" data-domain-script="01983d79-97c6-7c6d-b18b-96739e2ea7ce" ></script>
     <script type="text/javascript">
-    function OptanonWrapper() { 
+        function OptanonWrapper() { 
 
-        console.log("OneTrust SDK Initialized.");
-        showConsentState(); // Display anonymous UUID and categories
-    }
+            console.log("OneTrust SDK Initialized.");
+            showConsentState(); // Display anonymous UUID and categories
+        }
     </script>
-<!-- OneTrust Cookies Consent Notice end for pb-del.github.io -->
+<!-- OneTrust Cookies Consent Notice end for pb-del.github.io/dashboard -->
 
 </head>
 
@@ -78,31 +78,37 @@
                 }); 
 
                 const data = await res.json();
-                out.textContent = JSON.stringify(data, null, 2);
 
-                container.innerHTML = "";
+                // raw output
+                if (out) out.textContent = JSON.stringify(data, null, 2);
 
-                (data?.purposes || []).forEach(({ id, status }) => {
-                    const s = String(status || "").toUpperCase(); // WITHDRAWN | ACTIVE | ALWAYS_ACTIVE
-                    const checked = s === "ACTIVE" || s === "ALWAYS_ACTIVE";
-                    const locked  = s === "ALWAYS_ACTIVE";
 
-                    // use purpose id to map to purpose name
-                    const purposeName = purpose_name_by_id[id] || id; 
+                // preference center
+                if (container) {
+                    container.innerHTML = "";
+                    (data?.purposes || []).forEach(({ id, status }) => {
+                        const s = String(status || "").toUpperCase(); // WITHDRAWN | ACTIVE | ALWAYS_ACTIVE
+                        const checked = s === "ACTIVE" || s === "ALWAYS_ACTIVE";
+                        const locked  = s === "ALWAYS_ACTIVE";
 
-                    const input = document.createElement("input");
-                    input.type = "checkbox";
-                    input.checked = checked;
-                    input.disabled = locked;
-                    input.dataset.purposeID = id; // keep original id for later use
+                        // use purpose id to map to purpose name
+                        const purposeName = purpose_name_by_id[id] || id; 
 
-                    const label = document.createElement("span");
-                    label.textContent = purposeName;
+                        const row = document.createElement("div");
+                        const label = document.createElement("span");
+                        const input = document.createElement("input");
+                        
+                        label.textContent = purposeName;
 
-                    const row = document.createElement("div");
-                    row.append(label, input);
-                    container.appendChild(row);
-                });
+                        input.type = "checkbox";
+                        input.checked = checked;
+                        input.disabled = locked;
+                        input.dataset.purposeID = id; // keep original id for later use
+                        
+                        row.append(label, input);
+                        container.appendChild(row);
+                    });
+                }
 
             } catch (err) {
                 out.textContent = `Error: ${err?.message || String(err)}`;
@@ -111,10 +117,7 @@
         }
 
         document.getElementById('get').addEventListener('click', getPreferences);
-        document.addEventListener('DOMContentLoaded', getPreferences);
-
     </script>
-
 
 </body>
 </html>
