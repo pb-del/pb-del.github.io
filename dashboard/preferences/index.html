@@ -58,7 +58,6 @@
             "3709f25d-d42d-4947-b61d-c4fac9bc4f4b": "Performance Cookies"
         }
 
-        const OT_demo_jwt ='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJNQU4tMzQ1Njc4In0.N2kP_BTB1p2DoReFkKrCEq3fxx5rJF_RZq9qmKyExw0'
         async function getPreferences() {
             const out = document.getElementById('raw');
             const sum = document.getElementById('summary');
@@ -67,13 +66,13 @@
             sum.textContent = '';
 
             try {
-                const res = await fetch('https://consent-api.onetrust.com/v1/preferences', {
+                const res = await fetch('https://consent-api.onetrust.com/v2/preferences', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
                         'identifier': 'MAN-345678',
                         'tenantId': '920f4633-570d-4168-84fb-38be47679c8f',
-                        'Authorization':  'Bearer ${OT_demo_jwt}'
+                        'Authorization':  'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJNQU4tMzQ1Njc4In0.N2kP_BTB1p2DoReFkKrCEq3fxx5rJF_RZq9qmKyExw0'
                     }
                 }); 
 
