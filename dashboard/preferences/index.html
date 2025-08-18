@@ -35,7 +35,6 @@
     <button onclick="showConsentState()">Show Current Consent State in the console</button>
     <pre id="output"></pre>
 
-    <h2> Custom Preference Center</h2>
     <button id="get">GET Preferences</button>
 
     <h3> Raw response </h3>
@@ -53,6 +52,7 @@
             console.log("Consent State:", domainData);
         }
 
+        // fetch purpose IDs from internal mapping or via api call and map to categories desired to be displayed on the browser
         const PURPOSE_NAME_BY_ID = {
             "d7288f85-76c0-4374-a565-d241e7693e6e": "Strictly Necessary Cookies",
             "3709f25d-d42d-4947-b61d-c4fac9bc4f4b": "Performance Cookies"
@@ -81,12 +81,11 @@
 
                 // Simple summary 
 
-                const prefs = Array.isArray(data.preferences) ? data.preferences : [];
+                const prefs = Array.isArray(data.purposes) ? data.purposes : [];
                 const lines = prefs.map(p => {
                     const name = PURPOSE_NAME_BY_ID[p.id] || p.id;
                     const status = p.status || 'UNKNOWN';
-                    const exp = p.expiryDate ? ` (expires ${p.expiryDate})` : '';
-                    return `* ${name} -- ${status}${exp}`;
+                    return `* ${name} -- ${status}`;
                 });
 
                 const meta = data.dataElements
