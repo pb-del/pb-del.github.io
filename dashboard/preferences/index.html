@@ -138,7 +138,7 @@
             const checkboxes = document.querySelectorAll('#pc input[type="checkbox"]');
             for (const checkbox of checkboxes) {
                 const purposeId = checkbox.dataset.purposeId;
-                const cat = category_by_idp[purposeId];
+                const cat = category_by_id[purposeId];
                 if (!cat) continue; 
                 const bit = checkbox.disabled ? 1 : (checkbox.checked ? 0 : 1);
                 bits.push(`${cat}:${bit}`);
@@ -157,11 +157,11 @@
 
         document.getElementById('allowAll').addEventListener('click', () => {
             OneTrust.AllowAll();                    // enable all categories
-                OneTrust.syncConsentProfile("MAN-345678", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJNQU4tMzQ1Njc4In0.N2kP_BTB1p2DoReFkKrCEq3fxx5rJF_RZq9qmKyExw0", false); // push/pull consent record 
+                // OneTrust.syncConsentProfile("MAN-345678", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJNQU4tMzQ1Njc4In0.N2kP_BTB1p2DoReFkKrCEq3fxx5rJF_RZq9qmKyExw0", false); // push/pull consent record 
         });
 
         document.getElementById('rejectAll').addEventListener('click', () => {
-            OneTrust.RejectAll();                   // reject all non-essential
+            // OneTrust.RejectAll();                   // reject all non-essential
                 OneTrust.syncConsentProfile("MAN-345678", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJNQU4tMzQ1Njc4In0.N2kP_BTB1p2DoReFkKrCEq3fxx5rJF_RZq9qmKyExw0", false); // push/pull consent record 
         })
 
