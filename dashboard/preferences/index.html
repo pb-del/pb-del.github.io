@@ -42,7 +42,10 @@
 
     <h3> Preference Center </h3>
     <div id ="pc"></div>
-    <!-- <button id ="saveBtn">Save</button> -->
+
+    <button id ="allowAll">Allow All</button>
+    <button id ="rejectAll">Reject All</button>
+    <button id = "submit">Submit</button>
 
     <script>
 
@@ -53,18 +56,25 @@
             console.log("Consent State:", domainData);
         }
 
+        
+        // fetch purpose IDs from internal mapping or via api call and map to categories desired to be displayed on the browser
+        const purpose_name_by_id = {
+            "d7288f85-76c0-4374-a565-d241e7693e6e": "Strictly Necessary Cookies",
+            "3709f25d-d42d-4947-b61d-c4fac9bc4f4b": "Performance Cookies"
+            // add more mappings as necessary
+        };
+
+        const category_by_id = {
+            "d7288f85-76c0-4374-a565-d241e7693e6e": "C0001",
+            "3709f25d-d42d-4947-b61d-c4fac9bc4f4b": "C0002"
+            // add more mappings as necessary
+        };
+
         async function getPreferences() {
             const out = document.getElementById('raw');
             const container = document.getElementById('pc');
             
             out.textContent = 'Loading...';
-
-            // fetch purpose IDs from internal mapping or via api call and map to categories desired to be displayed on the browser
-             const purpose_name_by_id = {
-                "d7288f85-76c0-4374-a565-d241e7693e6e": "Strictly Necessary Cookies",
-                "3709f25d-d42d-4947-b61d-c4fac9bc4f4b": "Performance Cookies"
-                // add more mappings as necessary
-            };
 
             try {
                 const res = await fetch('https://consent-api.onetrust.com/v2/preferences', {
@@ -123,8 +133,46 @@
             }
         }
 
+        function getBitsFromUI() {
+            const bits = []; 
+            const checkboxes = document.querySelectorAll('#pc input[type="checkbox"]');
+            for (const checkbox of checkboxes) {
+                const purposeId = checkbox.dataset.purposeId;
+                const cat = category_by_idp[purposeId];
+                if (!cat) continue; 
+                const bit = checkbox.disabled ? 1 : (checkbox.checked ? 0 : 1);
+                bits.push(`${cat}:${bit}`);
+            }
+            return bits.join(',');
+        }
+
+        function onSubmit() {
+            const bitsCsv = getBitsFromUI();   // e.g., "C0002:1, C0003:0"
+            if (bitsCsv) OneTrust.UpdateConsent('Category', bitsCsv);
+
+            OneTrust.SyncConsentProfile("MAN-345678", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJNQU4tMzQ1Njc4In0.N2kP_BTB1p2DoReFkKrCEq3fxx5rJF_RZq9qmKyExw0", false); // push/pull consent record
+        }
+
         document.getElementById('get').addEventListener('click', getPreferences);
+
+        document.getElementById('allowAll').addEventListener('click', () => {
+            OneTrust.AllowAll();                    // enable all categories
+                OneTrust.SyncConsentProfile("MAN-345678", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJNQU4tMzQ1Njc4In0.N2kP_BTB1p2DoReFkKrCEq3fxx5rJF_RZq9qmKyExw0", false); // push/pull consent record 
+        });
+
+        document.getElementById('rejectAll').addEventListener('click', () => {
+            OneTrust.RejectAll();                   // reject all non-essential
+                OneTrust.SyncConsentProfile("MAN-345678", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJNQU4tMzQ1Njc4In0.N2kP_BTB1p2DoReFkKrCEq3fxx5rJF_RZq9qmKyExw0", false); // push/pull consent record 
+        })
+
+        document.getElementById('submit').addEventListener('click', onSubmit);
+
     </script>
 
+    <script> 
+        window.addEventListener("OneTrustGroupsUpdated",event =>{
+        console.log(`The following groups are now active: ${event.detail.join(", ")}`)
+        });
+    </script>
 </body>
 </html>
