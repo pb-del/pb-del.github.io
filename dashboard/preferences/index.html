@@ -140,7 +140,7 @@
                 const purposeId = checkbox.dataset.purposeId;
                 const cat = category_by_id[purposeId];
                 if (!cat) continue; 
-                const bit = checkbox.disabled ? 1 : (checkbox.checked ? 0 : 1);
+                const bit = checkbox.disabled ? 1 : (checkbox.checked ? 1 : 0);
                 bits.push(`${cat}:${bit}`);
             }
             return bits.join(',');
