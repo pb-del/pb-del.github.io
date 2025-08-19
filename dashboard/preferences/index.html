@@ -157,11 +157,11 @@
 
         document.getElementById('allowAll').addEventListener('click', () => {
             OneTrust.AllowAll();                    // enable all categories
-                // OneTrust.syncConsentProfile("MAN-345678", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJNQU4tMzQ1Njc4In0.N2kP_BTB1p2DoReFkKrCEq3fxx5rJF_RZq9qmKyExw0", false); // push/pull consent record 
+                OneTrust.syncConsentProfile("MAN-345678", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJNQU4tMzQ1Njc4In0.N2kP_BTB1p2DoReFkKrCEq3fxx5rJF_RZq9qmKyExw0", false); // push/pull consent record 
         });
 
         document.getElementById('rejectAll').addEventListener('click', () => {
-            // OneTrust.RejectAll();                   // reject all non-essential
+            OneTrust.RejectAll();                   // reject all non-essential
                 OneTrust.syncConsentProfile("MAN-345678", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJNQU4tMzQ1Njc4In0.N2kP_BTB1p2DoReFkKrCEq3fxx5rJF_RZq9qmKyExw0", false); // push/pull consent record 
         })
 
