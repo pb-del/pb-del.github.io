@@ -143,30 +143,34 @@
             const save_api = document.getElementById('save-api');
         
             const options = {
-                method: 'POST',
-                headers: {
-                    accept: 'application/json',
-                    'OT-CDN-Location': 'cdn.cookielaw.org',
-                    'OT-App-Id': '01983d79-97c6-7c6d-b18b-96739e2ea7ce',
-                    'OT-Device-Type': 'mobile',
-                    'OT-SDK-Version': '202507.1.0',
-                    'content-type': 'application/json'
+            method: 'POST',
+            headers: {
+                accept: 'application/json',
+                'OT-CDN-Location': 'cdn.cookielaw.org',
+                'OT-App-Id': '01983d79-97c6-7c6d-b18b-96739e2ea7ce',
+                'OT-Device-Type': 'mobile',
+                'OT-SDK-Version': '202507.1.0',
+                'OT-Fetch-Type': 'APP_DATA_AND_SYNC_PROFILE',
+                'OT-Identifier': 'MAN-345678',
+                'OT-Identifier-Type': 'MAN',
+                'OT-Sync-Profile-Auth': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJNQU4tMzQ1Njc4In0.N2kP_BTB1p2DoReFkKrCEq3fxx5rJF_RZq9qmKyExw0',
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify({
+                consent: {
+                purposesStatus: [{status: true, groupId: 'C0001'}, {status: true, groupId: 'C0002'}]
                 },
-                body: JSON.stringify({
-                    consent: {
-                    purposesStatus: [{status: true, groupId: 'C0001'}, {status: true, groupId: 'C0002'}]
-                    },
-                    customDataElements: {newKey: 'New Value'},
-                    interactionType: 'SYNC_PROFILE'
-                })
-                };
+                customDataElements: {newKey: 'New Value'},
+                interactionType: 'SYNC_PROFILE'
+            })
+            };
 
-                fetch('https://mobile-data.onetrust.io/cfw/cmp/v1/save-log-consent', options)
-                .then(res => res.json())
-                .then(res => console.log(res))
-                .catch(err => console.error(err));
+            fetch('https://mobile-data.onetrust.io/cfw/cmp/v1/save-log-consent', options)
+            .then(res => res.json())
+            .then(res => console.log(res))
+            .catch(err => console.error(err));
 
-            save_api.textContent = JSON.stringify(options, null, 2);
+            save_api.textContent = JSON.stringify(res, null, 2);
 
         }
 
