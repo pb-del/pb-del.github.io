@@ -19,6 +19,7 @@
         function OptanonWrapper() { 
 
             console.log("OneTrust SDK Initialized.");
+            OneTrust.InsertScript('/scripts/perf_cookie.js', 'head', null, null, 'C0002')
             showConsentState(); // Display anonymous UUID and categories
         }
     </script>
@@ -37,7 +38,7 @@
 
     <a href="sdk-preferences/">Custom Preference Center (SDK)</a>
 
-    <a href="api-preferences/">Custom Preference Center (API)</a>
+    <!-- <a href="api-preferences/">Custom Preference Center (API)</a> -->
     
     <script>
 
@@ -50,9 +51,9 @@
     </script>
 
 <!-- Test performance cookie -->
-    <script type="text/javascript" class="optanon-category-C0002"> 
+    <!-- <script type="text/javascript" class="optanon-category-C0002"> 
         document.cookie = "Perf_TestCookie" + "=" + "Test_CookieHere!"; 
-    </script>
+    </script> -->
 
     <script> 
         window.addEventListener("OneTrustGroupsUpdated",event =>{
